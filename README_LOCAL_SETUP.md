@@ -101,6 +101,9 @@ Variables and Secrets.
 | `Cannot find module 'next'` | Run `yarn install --frozen-lockfile` |
 | API returns `Database binding "DB" is not configured` | The `d1_databases` entry is missing from `wrangler.jsonc`, or the site is running outside `yarn dev` / `yarn preview` / Cloudflare |
 | Admin login says `Invalid password` | `ADMIN_PASSWORD` is not set for that environment (see section 3) |
+| `yarn deploy` ends with `Couldn't find the binary wrangler` | The site is already built and cached at that point; finish with `$env:OPEN_NEXT_DEPLOY='true'; npx wrangler deploy` (PowerShell). This is the exact step `yarn deploy` runs last |
+| Live site shows Cloudflare error 1101 or a blank 404 | The Worker still holds the placeholder created by `wrangler secret put`; deploy the real build |
+| `www.therapidrevenue.in` does not load | `www` has no DNS record. Add it as a second Custom Domain on the Worker (Settings -> Domains & Routes) |
 | `/og.png` returns 404 | The social-preview image was never in the export. Add `public/og.png` (1200x630) |
 | `WARN OpenNext is not fully compatible with Windows` | Expected. The build and preview worked here; use the GitHub route in section 4 if it fails |
 | Port 3000 or 8787 in use | Stop the other process, or run `npx next dev --port 3001` |

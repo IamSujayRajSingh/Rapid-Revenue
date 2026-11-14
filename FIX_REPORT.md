@@ -134,6 +134,22 @@ re-clicked in the browser.
 - Optional cleanup: the temporary MongoDB download (about 780 MB) from the earlier test is in
   the session temp folder `%LOCALAPPDATA%\Temp\claude\...\scratchpad\mongo` and can be deleted.
 
+## Production deployment (2026-11-14)
+
+- **Problem reported:** `therapidrevenue.in` showed an error page after the domain was attached.
+- **Cause:** the Worker `rapid-revenue` only held the placeholder that `wrangler secret put`
+  creates (it returned Cloudflare error 1101). The GitHub-connected build had not produced a
+  deployment (no new version 30+ minutes after the trigger commit `c24c415`); its log was not read.
+- **Fix:** built locally with `.env.development.local` moved aside (the bundle's env sections
+  are empty: no local passwords inside), then deployed. `yarn deploy` failed at its last step
+  (`yarn exec wrangler`: `Couldn't find the binary wrangler`), so that step was run directly as
+  `OPEN_NEXT_DEPLOY=true npx wrangler deploy`. Version `4e42702d-c826-4d88-b939-5920c062de1c`.
+- **Verified (GET requests only, no data written):** on `https://therapidrevenue.in` and
+  `https://rapid-revenue.sujayraj4.workers.dev`, 20 pages and assets return 200, unknown pages 404,
+  `/api/health` ok, library returns 15 resources from D1, prerendered pages `x-opennext-cache: HIT`.
+- **Not working:** `www.therapidrevenue.in` has no DNS record (non-existent domain).
+- **Open:** why the GitHub build did not deploy. Until fixed, deploy from this PC as above.
+
 ## Git
 
 A local repository was created (none existed). `main` holds the original export (`ddf104c`);
