@@ -10,16 +10,18 @@
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
 	},
-	// Cloudflare D1 database for leads and the resource library.
-	// No database_id yet: the first `yarn deploy` creates the database in your account and
-	// writes its id back into this file. Locally, a private copy lives under .wrangler/.
+	// Cloudflare D1 database for leads and the resource library (created 2026-11-14, region APAC).
+	// Production uses this database. `yarn dev` / `yarn preview` use a private local copy under .wrangler/.
 	"d1_databases": [
 		{
-			"binding": "DB"
+			"binding": "DB",
+			"database_name": "rapid-revenue-db",
+			"database_id": "257e7064-2c5b-4c1e-bc97-3290db8fc7c9"
 		}
 	],
 	"observability": {
 		"enabled": true
 	}
-	// The only secret, set once with:  npx wrangler secret put ADMIN_PASSWORD
+	// The only secret: ADMIN_PASSWORD. Set it in the dashboard (Worker -> Settings ->
+	// Variables and Secrets) or with:  npx wrangler secret put ADMIN_PASSWORD
 }

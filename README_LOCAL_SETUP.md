@@ -76,14 +76,8 @@ yarn deploy
 
 - `wrangler secret put` asks for the value in the terminal. Use a **new** admin password, not
   the one from the Emergent export. If it offers to create the Worker `rapid-revenue`, answer yes.
-- The first `yarn deploy` creates the D1 database in your account and writes its
-  `database_id` into `wrangler.jsonc`. Keep that change (commit it).
-- If the deploy stops with a message about a missing `database_id`, create the database by
-  hand and paste the id it prints into `wrangler.jsonc` next to `"binding": "DB"`:
-
-  ```powershell
-  npx wrangler d1 create rapid-revenue-db
-  ```
+- The production D1 database `rapid-revenue-db` already exists (created 2026-11-14, region
+  APAC) and its id is in `wrangler.jsonc`. Do not create another one.
 
 - After deploying, add your domain under Workers & Pages -> rapid-revenue -> Settings ->
   Domains & Routes.
@@ -91,10 +85,13 @@ yarn deploy
   `leads` table, or the site's own `/admin/library` page (Leads tab).
 - Free plan limit is 3 MiB compressed; this build is about 1.2 MiB.
 
-Alternative that avoids building on Windows: push the repo to GitHub and connect it in
-Cloudflare (Workers & Pages -> Create -> Import a repository) with build command
-`npx opennextjs-cloudflare build` and deploy command `npx opennextjs-cloudflare deploy`. Set
-`ADMIN_PASSWORD` under the Worker's Settings -> Variables and Secrets.
+**Recommended: automatic deploys from GitHub.** The code is at
+https://github.com/IamSujayRajSingh/Rapid-Revenue. When connected to Cloudflare (Workers &
+Pages -> Create application -> GitHub), every `git push` to `main` builds and deploys the site on
+Cloudflare's Linux builders. Settings: project name `rapid-revenue` (must match `name` in
+`wrangler.jsonc`), build command `npx opennextjs-cloudflare build`, deploy command
+`npx opennextjs-cloudflare deploy`. Set `ADMIN_PASSWORD` under the Worker's Settings ->
+Variables and Secrets.
 
 ## 5. Troubleshooting
 
