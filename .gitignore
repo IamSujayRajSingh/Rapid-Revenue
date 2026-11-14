@@ -26,3 +26,16 @@ Thumbs.db
 
 # Emergent export: env values exported as plain text (contains secrets)
 env.txt
+
+# Next.js
+/out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Cloudflare / OpenNext build output and local secrets
+.open-next/
+.dev.vars
+.dev.vars.*
+
+# Emergent agent scratch file (may hold credentials)
+memory/test_credentials.md
