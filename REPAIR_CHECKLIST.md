@@ -12,8 +12,8 @@
 - [ ] Browser Network failures classified
 - [ ] Images and static assets load
 - [x] Navigation and deep links work
-- [ ] Forms validated without submitting to production
-- [ ] Authentication and database tested only on approved dev environment
+- [x] Forms validated without submitting to production
+- [x] Authentication and database tested only on approved dev environment
 - [ ] Lint, typecheck, tests (if present), and build results recorded
 - [x] No credentials or customer records tracked in Git
 - [x] FIX_REPORT.md and README_LOCAL_SETUP.md updated

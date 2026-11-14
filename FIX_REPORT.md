@@ -37,7 +37,7 @@ this report.
 | 4 | High | `GET /api/health` -> `500 connect ECONNREFUSED 127.0.0.1:27017` | No MongoDB on this machine | **Not fixed.** Needs a database (see Remaining issues) |
 | 5 | Medium | `/og.png`, `/logo.png`, `/favicon.ico` -> 404 | Referenced in metadata/schema but no `public/` folder in the export | **Not fixed.** Real brand images are needed |
 | 6 | Medium (Cloudflare) | `@opennextjs/cloudflare` peer dependency is `next >=15.5.29 <16`; project had 15.5.18 | Adapter drops Next versions with known security fixes | Bumped `next` 15.5.18 -> 15.5.29 (patch only) |
-| 7 | Medium (Cloudflare) | Route cached one MongoDB client in a module variable | Cloudflare Workers cannot reuse a socket across requests (Cloudflare MongoDB docs) | On Workers only, the client is created per request and closed after it. Node.js behaviour is unchanged |
+| 7 | High (Cloudflare) | With the original route, every second DB request in workerd failed: `Cannot perform I/O on behalf of a different request` | Route cached one MongoDB client in a module variable; Workers cannot reuse a socket across requests | On Workers only, the client is created per request and closed after it. Node.js behaviour is unchanged |
 | 8 | Medium (Cloudflare) | OpenNext copied `.env` values into the Worker bundle as production defaults | Adapter behaviour (`process.env[key] ??= value`) | Local values moved to `.env.development.local`; the bundle's production section is now empty |
 | 9 | Low | `.gitignore` did not cover `env.txt`, `.open-next/`, `.dev.vars` | Starter-kit ignore file predates these | Added entries |
 
@@ -67,19 +67,37 @@ this report.
 | API database path | `GET /api/health`, both runtimes, no DB running | 500 `ECONNREFUSED` (expected without a database) |
 | Lint / type-check / tests | none | The project has no such scripts. `tests/` holds only an empty `__init__.py` |
 
-**Not tested** (no database available): saving a lead, library listing/seed/download, admin
-login with the correct password, admin create/edit/delete, and any real MongoDB connection from
-the Workers runtime. The per-request client change (#7) follows Cloudflare's documentation but
-has not been exercised against a real database.
+### Database tests (added after approval)
+
+A temporary MongoDB 8.2.6 server was downloaded to a temp folder outside the project and run on
+`127.0.0.1:27017` with a throwaway database. It has been stopped. Only test data was written.
+
+| Check | Node dev server (`:3000`) | Workers runtime (`:8787`) |
+| --- | --- | --- |
+| 26-step API script: health, list + auto-seed (15 resources), pagination, search, featured filter, tags, by-slug, 404s, lead save, gated download + counter, admin login right/wrong, admin list/leads, admin create/update/delete, draft hidden from public | 26/26 pass | 26/26 pass |
+| 8 sequential + 12 concurrent database requests | all 200 | all 200 |
+| Browser: `/library` lists resources from the database | not run | 12 cards shown |
+| Browser: contact form submit | not run | `POST /api/lead` 200, "Message received" shown |
+| Browser: admin login -> admin library | not run | Redirected to `/admin/library`, "15 resources · 5 featured" |
+| Prerendered pages served from cache (after `populateCache local`) | n/a | `x-opennext-cache: HIT` on `/`, `/about`, service and blog pages |
+
+**Evidence for fix #7.** The Worker was rebuilt once with the *original* route code. Every
+second database request failed with `Cannot perform I/O on behalf of a different request`.
+With the per-request client, all requests succeed. The original file was then restored to the
+fixed version and the Worker rebuilt.
+
+**Still not tested:** a TLS / `mongodb+srv://` connection to MongoDB Atlas from Cloudflare (the
+local test used plain TCP), and anything on a real Cloudflare account.
 
 ## Remaining issues
 
 1. **Database.** A MongoDB is required locally and in production. Emergent's data was not
    exported, so leads/resources start empty (resources re-seed automatically).
 2. **MongoDB driver version.** The project pins `mongodb` 6.6.0. The published Cloudflare
-   examples use 6.15 or newer. 6.6.0 loads and attempts a TCP connection in workerd, but a full
-   connection is unverified. Not upgraded, because no failure was demonstrated. If the first
-   connection on Cloudflare fails, upgrading to the latest 6.x is the first thing to try.
+   examples use 6.15 or newer. 6.6.0 passed every test in workerd against a local MongoDB over
+   plain TCP, so it was not upgraded. Atlas uses TLS and `mongodb+srv://`, which could not be
+   tested locally. If the first connection on Cloudflare fails, upgrading to the latest 6.x is
+   the first thing to try.
 3. **Missing images:** `public/og.png` (1200x630), `public/logo.png`, `favicon.ico`.
 4. **Placeholder content shipped by the builder:** phone `+91 00000 00000`, WhatsApp number
    `919999999999` (`lib/site-config.js`), and seed resource links pointing at `example.com`
@@ -105,7 +123,8 @@ has not been exercised against a real database.
 
 - Install Yarn globally: `npm install -g yarn@1.22.22` (I used a temporary `npx` shim instead).
 - Choose a database: local MongoDB for testing and/or a MongoDB Atlas cluster for Cloudflare.
-- Approve a database test (download a local MongoDB, or give a **development** Atlas URI).
+- Optional cleanup: the temporary MongoDB download (about 780 MB) is in the session temp folder
+  `%LOCALAPPDATA%\Temp\claude\...\scratchpad\mongo` and can be deleted.
 - Cloudflare: `wrangler login`, three `wrangler secret put` commands, then `yarn deploy`.
 - Decide on items 3 to 6 above (images, placeholder contact details, new admin password, headers).
 
