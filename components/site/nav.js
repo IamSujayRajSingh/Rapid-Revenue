@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowUpRight, Menu, X, ChevronDown } from 'lucide-react'
 import { NAV, SITE } from '@/lib/site-config'
+import Logo from '@/components/site/logo'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -28,10 +29,7 @@ export default function Nav() {
         <div className="mx-auto max-w-7xl px-4">
           <div className={`flex items-center justify-between rounded-full transition-all duration-500 ${scrolled ? 'glass px-4 py-2.5' : 'px-2 py-2'}`}>
             <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-white to-neutral-400 flex items-center justify-center">
-                <span className="text-black font-black text-sm">R</span>
-              </div>
-              <span className="font-semibold tracking-tight text-[15px]">Rapid Revenue</span>
+              <Logo className="h-11 -my-1" />
             </Link>
 
             <nav className="hidden lg:flex items-center gap-0.5">

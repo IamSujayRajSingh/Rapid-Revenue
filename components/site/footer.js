@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowUpRight, Instagram, Linkedin, Youtube, Twitter } from 'lucide-react'
 import { SITE, FOOTER_LINKS } from '@/lib/site-config'
+import Logo from '@/components/site/logo'
 
 export default function Footer() {
   return (
@@ -10,10 +11,7 @@ export default function Footer() {
         <div className="grid lg:grid-cols-12 gap-10 pb-14">
           <div className="lg:col-span-4">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-white to-neutral-400 flex items-center justify-center">
-                <span className="text-black font-black text-sm">R</span>
-              </div>
-              <span className="font-semibold tracking-tight">Rapid Revenue</span>
+              <Logo className="h-12" />
             </Link>
             <p className="mt-5 text-[14px] text-neutral-500 max-w-sm leading-relaxed">
               {SITE.tagline}. We engineer businesses that advertising can scale profitably.

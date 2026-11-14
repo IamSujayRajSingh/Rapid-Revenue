@@ -1,27 +1,8 @@
+const { initOpenNextCloudflareForDev } = require('@opennextjs/cloudflare');
+
 const nextConfig = {
-  output: 'standalone',
   images: {
     unoptimized: true,
-    remotePatterns: [
-      { protocol: 'https', hostname: 'avatars.githubusercontent.com', pathname: '/**' },
-    ],
-  },
-  // Renamed from experimental.serverComponentsExternalPackages in Next 15
-  serverExternalPackages: ['mongodb'],
-  webpack(config, { dev }) {
-    if (dev) {
-      // Reduce CPU/memory from file watching
-      config.watchOptions = {
-        poll: 2000, // check every 2 seconds
-        aggregateTimeout: 300, // wait before rebuilding
-        ignored: ['**/node_modules'],
-      };
-    }
-    return config;
-  },
-  onDemandEntries: {
-    maxInactiveAge: 10000,
-    pagesBufferLength: 2,
   },
   async headers() {
     return [
@@ -40,3 +21,6 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+
+// Makes the Cloudflare bindings from wrangler.jsonc (the D1 database) available to `next dev`.
+initOpenNextCloudflareForDev();

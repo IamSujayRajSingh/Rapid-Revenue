@@ -10,6 +10,7 @@ const inter = Inter({ subsets: ['latin'], weight: ['400','500','600','700','800'
 
 export const metadata = {
   metadataBase: new URL(SITE.url),
+  icons: { icon: '/favicon.png', apple: '/favicon.png' },
   title: { default: `${SITE.name} — ${SITE.tagline}`, template: `%s — ${SITE.name}` },
   description: SITE.description,
   keywords: 'Profit Engineering, D2C growth agency India, Performance Marketing, Shopify agency, CAC optimization, MER, RTO reduction, Meta Ads India, Google Ads, Amazon growth, Flipkart growth, Rapid Revenue, Sujay Raj Singh, ecommerce consulting India',

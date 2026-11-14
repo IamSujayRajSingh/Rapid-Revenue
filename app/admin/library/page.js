@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Plus, Pencil, Trash2, Save, X, Search, LogOut, Sparkles, ExternalLink, Users, FileText, Gauge, Check as CheckIcon } from 'lucide-react'
 import { CATEGORIES, TYPES } from '@/lib/data/resource-seed'
 import { scoreSEO } from '@/lib/seo-score'
+import { LogoMark } from '@/components/site/logo'
 
 function useAdminToken() {
   const router = useRouter()
@@ -192,7 +193,7 @@ export default function AdminLibrary() {
       <header className="sticky top-0 z-30 bg-black/70 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-white to-neutral-400 flex items-center justify-center"><span className="text-black font-black text-sm">R</span></div>
+            <LogoMark className="h-8 w-8" />
             <div><div className="text-[13px] font-semibold">Rapid Revenue Admin</div><div className="text-[10px] text-neutral-500">Library management</div></div>
           </div>
           <div className="flex items-center gap-2">

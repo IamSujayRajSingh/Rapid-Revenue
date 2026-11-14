@@ -2,7 +2,5 @@
 # Tells OpenNext which Next.js .env files to load; unset means production.
 NEXTJS_ENV=development
 
-# Same variables as .env.example (names only; see that file for descriptions).
-MONGO_URL=
-DB_NAME=
+# See .env.example for the description.
 ADMIN_PASSWORD=

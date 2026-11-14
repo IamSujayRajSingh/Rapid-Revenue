@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock, ArrowRight } from 'lucide-react'
+import { LogoMark } from '@/components/site/logo'
 
 export default function AdminLogin() {
   const router = useRouter()
@@ -30,7 +31,7 @@ export default function AdminLogin() {
     <main className="bg-black text-white min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-sm">
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-white to-neutral-400 flex items-center justify-center"><span className="text-black font-black text-sm">R</span></div>
+          <LogoMark className="h-9 w-9" />
           <span className="font-semibold tracking-tight">Rapid Revenue Admin</span>
         </div>
         <form onSubmit={submit} className="rounded-3xl border border-white/[0.08] bg-[#0a0a0a] p-8">
