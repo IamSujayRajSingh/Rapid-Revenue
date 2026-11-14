@@ -31,7 +31,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: `${SITE.name} — Scale Smarter. Grow Profitably.`,
     description: SITE.description,
-    creator: '@rapidrevenue',
+    creator: '@SujayRajSingh',
     images: ['/og.png'],
   },
   robots: {

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowUpRight, Instagram, Linkedin, Youtube, Twitter } from 'lucide-react'
+import { ArrowUpRight, Instagram, Linkedin, Twitter } from 'lucide-react'
 import { SITE, FOOTER_LINKS } from '@/lib/site-config'
 import Logo from '@/components/site/logo'
 
@@ -22,8 +22,13 @@ export default function Footer() {
               <ArrowUpRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
             </a>
             <div className="mt-8 flex items-center gap-2">
-              {[Instagram, Linkedin, Youtube, Twitter].map((Icon, i) => (
-                <a key={i} href="#" className="h-9 w-9 rounded-full glass flex items-center justify-center hover:bg-white/10 transition">
+              {[
+                { Icon: Instagram, href: SITE.social.instagram, label: 'Instagram' },
+                { Icon: Linkedin, href: SITE.social.linkedin, label: 'LinkedIn' },
+                { Icon: Twitter, href: SITE.social.x, label: 'X (Twitter)' },
+              ].map(({ Icon, href, label }) => (
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} title={label}
+                   className="h-9 w-9 rounded-full glass flex items-center justify-center hover:bg-white/10 transition">
                   <Icon className="h-4 w-4 text-neutral-300" />
                 </a>
               ))}

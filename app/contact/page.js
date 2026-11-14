@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import PageHero from '@/components/site/page-hero'
 import { SITE } from '@/lib/site-config'
-import { Mail, MapPin, MessageCircle, Calendar, ArrowRight, Check } from 'lucide-react'
+import { Mail, MapPin, MessageCircle, Calendar, ArrowRight, Check, Phone } from 'lucide-react'
 
 export default function ContactPage() {
   const [state, setState] = useState({ name:'', email:'', phone:'', brand:'', revenue:'', message:'' })
@@ -24,6 +24,7 @@ export default function ContactPage() {
         <div className="space-y-3">
           <a href={SITE.calendly} target="_blank" rel="noopener" className="block rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-6 hover:border-white/20 transition"><Calendar className="h-5 w-5" /><h3 className="mt-3 font-semibold">Book Strategy Call</h3><p className="mt-1 text-[13px] text-neutral-400">30-min free session with our team.</p></a>
           <a href={SITE.whatsapp} target="_blank" rel="noopener" className="block rounded-2xl border border-white/[0.06] bg-[#0a0a0a] p-6 hover:border-white/20"><MessageCircle className="h-5 w-5 text-[#25D366]" /><h3 className="mt-3 font-semibold">WhatsApp</h3><p className="mt-1 text-[13px] text-neutral-400">Fastest way to reach us.</p></a>
+          <a href={SITE.phoneHref} className="block rounded-2xl border border-white/[0.06] bg-[#0a0a0a] p-6 hover:border-white/20"><Phone className="h-5 w-5" /><h3 className="mt-3 font-semibold">Phone</h3><p className="mt-1 text-[13px] text-neutral-400">{SITE.phone}</p></a>
           <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a0a] p-6"><Mail className="h-5 w-5" /><h3 className="mt-3 font-semibold">Email</h3><p className="mt-1 text-[13px] text-neutral-400">{SITE.email}</p></div>
           <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a0a] p-6"><MapPin className="h-5 w-5" /><h3 className="mt-3 font-semibold">Location</h3><p className="mt-1 text-[13px] text-neutral-400">{SITE.location}</p></div>
           <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a0a] p-4 aspect-video flex items-center justify-center text-[12px] text-neutral-500">Map placeholder</div>

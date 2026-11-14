@@ -10,8 +10,8 @@ export const orgSchema = {
   description: SITE.description,
   founder: { '@type': 'Person', name: SITE.founder, jobTitle: SITE.founderTitle },
   address: { '@type': 'PostalAddress', addressLocality: 'Bengaluru', addressRegion: 'Karnataka', addressCountry: 'IN' },
-  contactPoint: { '@type': 'ContactPoint', email: SITE.email, contactType: 'customer support', areaServed: 'IN' },
-  sameAs: ['https://www.instagram.com/rapidrevenue', 'https://www.linkedin.com/company/rapidrevenue', 'https://twitter.com/rapidrevenue'],
+  contactPoint: { '@type': 'ContactPoint', email: SITE.email, telephone: SITE.phone, contactType: 'customer support', areaServed: 'IN' },
+  sameAs: Object.values(SITE.social),
   slogan: 'Scale Smarter. Grow Profitably.',
 }
 
