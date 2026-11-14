@@ -1,0 +1,8 @@
+# Copy to `.dev.vars` for local Cloudflare preview (`yarn preview`). Never commit `.dev.vars`.
+# Tells OpenNext which Next.js .env files to load; unset means production.
+NEXTJS_ENV=development
+
+# Same variables as .env.example (names only; see that file for descriptions).
+MONGO_URL=
+DB_NAME=
+ADMIN_PASSWORD=

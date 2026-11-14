@@ -39,3 +39,4 @@ next-env.d.ts
 
 # Emergent agent scratch file (may hold credentials)
 memory/test_credentials.md
+!.dev.vars.example

@@ -1,0 +1,21 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	// Cloudflare Workers config for the OpenNext build of this Next.js app.
+	// Nothing here deploys by itself; `yarn deploy` (or a Cloudflare Git build) does.
+	"name": "rapid-revenue",
+	"main": ".open-next/worker.js",
+	// >= 2025-03-20 is required for the MongoDB driver (node:net / node:tls in Workers).
+	"compatibility_date": "2026-10-01",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"observability": {
+		"enabled": true
+	}
+	// Secrets are NOT stored in this file. Set them once with:
+	//   npx wrangler secret put MONGO_URL
+	//   npx wrangler secret put DB_NAME
+	//   npx wrangler secret put ADMIN_PASSWORD
+}

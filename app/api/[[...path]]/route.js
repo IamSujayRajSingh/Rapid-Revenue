@@ -3,13 +3,30 @@ import { MongoClient } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 import { SEED_RESOURCES } from '@/lib/data/resource-seed'
 
+// Cloudflare Workers cannot reuse a socket opened by an earlier request, so there the
+// client is created per request and closed when the request ends (see releaseDb).
+// On Node.js (local dev / `next start`) the client is cached exactly as before.
+const IS_WORKERS = typeof navigator !== 'undefined' && navigator.userAgent === 'Cloudflare-Workers'
+const requestClients = new WeakMap()
 let cachedClient = null
-async function getDb() {
+async function getDb(request) {
+  if (IS_WORKERS) {
+    const client = new MongoClient(process.env.MONGO_URL, { maxPoolSize: 1, minPoolSize: 0, serverSelectionTimeoutMS: 5000 })
+    requestClients.set(request, client)
+    await client.connect()
+    return client.db(process.env.DB_NAME)
+  }
   if (cachedClient) return cachedClient.db(process.env.DB_NAME)
   const client = new MongoClient(process.env.MONGO_URL)
   await client.connect()
   cachedClient = client
   return client.db(process.env.DB_NAME)
+}
+async function releaseDb(request) {
+  const client = requestClients.get(request)
+  if (!client) return
+  requestClients.delete(request)
+  await client.close().catch(() => {})
 }
 
 function json(data, status = 200) { return NextResponse.json(data, { status }) }
@@ -46,7 +63,7 @@ export async function GET(request, { params }) {
   const path = (p?.path || []).join('/')
   const url = new URL(request.url)
   try {
-    const db = await getDb()
+    const db = await getDb(request)
 
     if (path === '' || path === 'health') return json({ status: 'ok', ts: new Date().toISOString() })
 
@@ -108,7 +125,7 @@ export async function GET(request, { params }) {
     return json({ error: 'Not found' }, 404)
   } catch (e) {
     return json({ error: e.message || 'Server error' }, 500)
-  }
+  } finally { await releaseDb(request) }
 }
 
 export async function POST(request, { params }) {
@@ -116,7 +133,7 @@ export async function POST(request, { params }) {
   const path = (p?.path || []).join('/')
   try {
     const body = await request.json().catch(() => ({}))
-    const db = await getDb()
+    const db = await getDb(request)
 
     if (path === 'lead') {
       const doc = { id: uuidv4(), name: body.name || '', email: body.email || '', phone: body.phone || '', brand: body.brand || '', revenue: body.revenue || '', message: body.message || '', source: body.source || 'homepage', createdAt: new Date().toISOString() }
@@ -171,7 +188,7 @@ export async function POST(request, { params }) {
     return json({ error: 'Not found' }, 404)
   } catch (e) {
     return json({ error: e.message || 'Server error' }, 500)
-  }
+  } finally { await releaseDb(request) }
 }
 
 export async function PUT(request, { params }) {
@@ -180,7 +197,7 @@ export async function PUT(request, { params }) {
   try {
     if (!isAdmin(request)) return json({ error: 'Unauthorized' }, 401)
     const body = await request.json().catch(() => ({}))
-    const db = await getDb()
+    const db = await getDb(request)
 
     if (path.startsWith('admin/resources/')) {
       const id = path.replace('admin/resources/', '')
@@ -195,7 +212,7 @@ export async function PUT(request, { params }) {
       return json({ ok: true, item })
     }
     return json({ error: 'Not found' }, 404)
-  } catch (e) { return json({ error: e.message }, 500) }
+  } catch (e) { return json({ error: e.message }, 500) } finally { await releaseDb(request) }
 }
 
 export async function DELETE(request, { params }) {
@@ -203,7 +220,7 @@ export async function DELETE(request, { params }) {
   const path = (p?.path || []).join('/')
   try {
     if (!isAdmin(request)) return json({ error: 'Unauthorized' }, 401)
-    const db = await getDb()
+    const db = await getDb(request)
     if (path.startsWith('admin/resources/')) {
       const id = path.replace('admin/resources/', '')
       const r = await db.collection('resources').deleteOne({ id })
@@ -211,5 +228,5 @@ export async function DELETE(request, { params }) {
       return json({ ok: true })
     }
     return json({ error: 'Not found' }, 404)
-  } catch (e) { return json({ error: e.message }, 500) }
+  } catch (e) { return json({ error: e.message }, 500) } finally { await releaseDb(request) }
 }
