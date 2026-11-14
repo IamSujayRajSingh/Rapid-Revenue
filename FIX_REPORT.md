@@ -117,7 +117,7 @@ Modified:
 - `yarn.lock` (from the three package changes above)
 - `app/api/[[...path]]/route.js` (per-request MongoDB client on Workers)
 - `.gitignore`
-- `FIX_REPORT.md`
+- `FIX_REPORT.md`, `REPAIR_CHECKLIST.md` (ticked the items that were verified)
 
 Added:
 - `.env.example`, `.dev.vars.example`
