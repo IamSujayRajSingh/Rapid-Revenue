@@ -1,0 +1,19 @@
+You are the senior full-stack engineer responsible for recovering and maintaining this EXISTING website. It was exported from an AI website builder (Lovable / Base44 / Emergent / other; identify the actual source from evidence). I want the real website repaired, not redesigned or rebuilt from scratch.
+
+Please read AGENTS.md and inspect the repository first.
+
+GOALS:
+1. Make this project install, run, and build locally on Windows 11 using the stack and package manager this repository actually requires.
+2. Preserve current design, routes, content, and working features.
+3. Identify which exported components are independent and which still depend on hosted platform services.
+4. Repair confirmed local errors using small, reversible changes; clearly separate problems that require my credentials, account access, external configuration, or a new backend.
+
+WORKFLOW:
+A. Audit: inspect package.json, lockfile, framework/tool versions, README, config files, import paths, assets, runtime boundaries, APIs, auth, database references, environment-variable names, and available tests. Determine whether there are separate frontend/backend services. Do not reveal secret values.
+B. Reproduce: choose the correct install/run commands based on the repo, then collect actual install, lint, typecheck, build, server, and browser errors where possible. Never assume npm/Vite if the repository says otherwise. Before performing risky installation scripts or downloading unfamiliar binaries, request approval.
+C. Prioritize: classify blockers as (1) local install/build, (2) frontend/runtime, (3) missing environment config, (4) missing hosted backend/integration, (5) functional/security bugs. Explain root causes briefly.
+D. Repair: make minimal local edits for reproducible errors. Do not replace the UI, recreate the project, force-upgrade all packages, remove lockfiles, or add fake auth/payments/data integrations. Do not modify production, trigger writes to external services, deploy, push to GitHub, change DNS, or run migrations remotely. Pause and ask before any such action.
+E. Validate: run the relevant local build, lint, typecheck, tests, and application smoke tests available. For every failed check, record the result; do not claim success without evidence.
+F. Document: create or update README_LOCAL_SETUP.md with exact Windows commands, required environment VARIABLE NAMES (never values), backend prerequisites, local URL, and troubleshooting steps. Create or update FIX_REPORT.md with original errors, root causes, changed files, commands/output, remaining blockers, and instructions for me.
+
+START NOW by identifying the actual technology stack and showing me the three highest-priority blockers, then proceed with safe local fixes. If you cannot reproduce a browser issue, ask me for the Console/Network errors or screenshot rather than inventing a diagnosis. At the end, explain in plain English what works, what remains broken, and the single next step for me.
