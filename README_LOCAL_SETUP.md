@@ -39,16 +39,22 @@ automatically on first use.
 Other commands:
 
 ```powershell
-yarn build      # plain Next.js production build (used by the Cloudflare build)
-yarn preview    # build for Cloudflare and run it in the local Workers runtime (http://localhost:8787)
-yarn deploy     # build and deploy to your Cloudflare account
+yarn build        # Cloudflare production build (OpenNext). Creates .open-next/. This is what Cloudflare runs.
+yarn build:next   # plain Next.js production build only (no Cloudflare output)
+yarn preview      # build for Cloudflare and run it in the local Workers runtime (http://localhost:8787)
+yarn deploy       # build and deploy to your Cloudflare account from this PC (normally not needed, see section 4)
 ```
+
+`yarn build` and `yarn cf:build` are the same command. `yarn build` must stay the OpenNext
+build: Cloudflare's Git integration runs `yarn run build` and then `npx wrangler deploy`, and the
+deploy step fails with `Could not find compiled Open Next config` if `.open-next/` was not built.
 
 `yarn preview` needs a `.dev.vars` file (copy `.dev.vars.example`).
 
 To wipe the local database, stop the servers and delete the `.wrangler` folder.
 
-There is no lint, type-check or test script in this project.
+There is no lint, type-check or test script in this project. It is plain JavaScript with no
+`tsconfig.json` and no ESLint configuration, so there is nothing for those scripts to check.
 
 ## 3. Environment variables
 
@@ -88,10 +94,11 @@ yarn deploy
 **Recommended: automatic deploys from GitHub.** The code is at
 https://github.com/IamSujayRajSingh/Rapid-Revenue. When connected to Cloudflare (Workers &
 Pages -> Create application -> GitHub), every `git push` to `main` builds and deploys the site on
-Cloudflare's Linux builders. Settings: project name `rapid-revenue` (must match `name` in
-`wrangler.jsonc`), build command `npx opennextjs-cloudflare build`, deploy command
-`npx opennextjs-cloudflare deploy`. Set `ADMIN_PASSWORD` under the Worker's Settings ->
-Variables and Secrets.
+Cloudflare's Linux builders. Settings (Worker -> Settings -> Build): project name
+`rapid-revenue` (must match `name` in `wrangler.jsonc`), build command `yarn run build`, deploy
+command `npx wrangler deploy`, root directory `/`. There is no output directory setting for
+Workers. Set `ADMIN_PASSWORD` under the Worker's Settings -> Variables and Secrets (type
+Secret), not under the build variables.
 
 ## 5. Troubleshooting
 
@@ -101,6 +108,7 @@ Variables and Secrets.
 | `Cannot find module 'next'` | Run `yarn install --frozen-lockfile` |
 | API returns `Database binding "DB" is not configured` | The `d1_databases` entry is missing from `wrangler.jsonc`, or the site is running outside `yarn dev` / `yarn preview` / Cloudflare |
 | Admin login says `Invalid password` | `ADMIN_PASSWORD` is not set for that environment (see section 3) |
+| Cloudflare build log: `Could not find compiled Open Next config, did you run the build command?` | The build command ran plain `next build`. The `build` script in `package.json` must be `opennextjs-cloudflare build` (it is), and the dashboard build command must be `yarn run build` |
 | `yarn deploy` ends with `Couldn't find the binary wrangler` | The site is already built and cached at that point; finish with `$env:OPEN_NEXT_DEPLOY='true'; npx wrangler deploy` (PowerShell). This is the exact step `yarn deploy` runs last |
 | Live site shows Cloudflare error 1101 or a blank 404 | The Worker still holds the placeholder created by `wrangler secret put`; deploy the real build |
 | `www.therapidrevenue.in` does not load | `www` has no DNS record. Add it as a second Custom Domain on the Worker (Settings -> Domains & Routes) |

@@ -1,6 +1,6 @@
 # Local Website Repair Report
 
-Last updated: 2026-11-14. Machine: Windows 11, Node.js 26.13.1, Git 2.56. No secret values
+Last updated: 2026-11-15. Machine: Windows 11, Node.js 26.13.1, Git 2.56. No secret values
 appear in this report.
 
 ## Current stack
@@ -148,9 +148,110 @@ re-clicked in the browser.
   `https://rapid-revenue.sujayraj4.workers.dev`, 20 pages and assets return 200, unknown pages 404,
   `/api/health` ok, library returns 15 resources from D1, prerendered pages `x-opennext-cache: HIT`.
 - **Not working:** `www.therapidrevenue.in` has no DNS record (non-existent domain).
-- **Open:** why the GitHub build did not deploy. Until fixed, deploy from this PC as above.
+- **Open (resolved 2026-11-15, see next section):** why the GitHub build did not deploy.
+
+## GitHub -> Cloudflare build fix (2026-11-15)
+
+**Reported failure (Cloudflare build of 2026-11-14):** `yarn run build` succeeded, then
+`npx wrangler deploy` stopped with `Could not find compiled Open Next config, did you run the
+build command?`.
+
+**Root cause (verified in the adapter source and reproduced by reading the config):**
+
+- `package.json` had `"build": "next build"`. Cloudflare's build command `yarn run build`
+  therefore produced only `.next/`.
+- `npx wrangler deploy` detects an OpenNext project and hands over to
+  `opennextjs-cloudflare deploy`, which requires `.open-next/.build/open-next.config.edge.mjs`
+  (`node_modules/@opennextjs/cloudflare/dist/cli/commands/utils/utils.js`,
+  `retrieveCompiledConfig`). Only `opennextjs-cloudflare build` creates it.
+- Running `next build` first and the adapter afterwards is not enough: the adapter sets
+  standalone build mode before it calls the Next.js build, so the adapter has to drive it.
+- This also answers the open question from 2026-11-14 ("why the GitHub build did not deploy").
+
+Nothing else was wrong: adapter 1.20.17 accepts Next.js 15.5.29 and Wrangler 4.162.0 (its peer
+ranges are `next >=15.5.29 <16`, `wrangler ^4.148.0`), `wrangler.jsonc` and
+`open-next.config.ts` were valid, and only `yarn.lock` exists (no second lockfile).
+
+**Changes**
+
+| File | Change | Why |
+| --- | --- | --- |
+| `package.json` | `build` is now `opennextjs-cloudflare build`; new `build:next` is `next build` | Cloudflare's existing `yarn run build` now produces `.open-next/`, with no dashboard change |
+| `open-next.config.ts` | Added `buildCommand: "yarn build:next"` | Without it the adapter would call `yarn build`, which is now itself (endless loop) |
+| `package.json` | `preview` is now `opennextjs-cloudflare build && opennextjs-cloudflare populateCache local && wrangler dev` | Same steps as before, but the old form ended in `yarn exec wrangler`, which Yarn Classic cannot run on Windows (`Couldn't find the binary wrangler`) |
+| `package.json`, `yarn.lock` | `resolutions.yaml` 2.8.3 -> 2.9.1 | `@opennextjs/aws` 4.1.16 asks for `yaml ^2.9.1`; removes the install warning |
+| `yarn.lock` | `caniuse-lite` 1.0.30001727 / 1.0.30001793 -> 1.0.30001826 (one entry) | Removes the "Browserslist: caniuse-lite is outdated" build warning. Data package only |
+| `app/layout.js` | `alternates.canonical` changed from `SITE.url` to `'./'` (approved by the owner on 2026-11-15) | Every page except blog posts declared the home page as its canonical URL. See below |
+| `README_LOCAL_SETUP.md`, `FIX_REPORT.md` | Commands, dashboard settings, troubleshooting row | Documentation |
+
+Not changed on purpose:
+
+- `resolutions.postcss` 8.5.10. Next.js pins `postcss` 8.4.31 exactly, so the warning
+  `Resolution field "postcss@8.5.10" is incompatible with requested version "postcss@8.4.31"`
+  stays. Removing the pin would move Next.js back to the older PostCSS. Harmless.
+- No TypeScript or ESLint was added. The site is plain JavaScript without `tsconfig.json` or an
+  ESLint config, so there is nothing for a type-check or lint script to run.
+- `deploy` script. It still ends in `yarn exec wrangler` on Windows (workaround in the README).
+  Deploys are meant to come from GitHub, where the build runs on Linux.
+- Routes, design, API code, `wrangler.jsonc`, `next.config.js`.
+
+**Validation (2026-11-15, Windows 11, Node 26.13.1, Yarn 1.22.22; local only)**
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Install as Cloudflare does | `yarn --frozen-lockfile` | PASSED. Only the postcss warning remains |
+| Type check / lint | none exist | NOT APPLICABLE (JavaScript project). Next.js's own build-time check passed |
+| Next.js build | runs inside `yarn run build` as `yarn build:next` | PASSED. Compiled, 65/65 static pages, no Browserslist warning |
+| OpenNext build, from a clean tree (`.next` and `.open-next` deleted first) | `yarn run build` | PASSED. `.open-next/worker.js`, `.open-next/assets/`, `.open-next/.build/open-next.config.edge.mjs` created |
+| Deploy packaging, nothing uploaded | `OPEN_NEXT_DEPLOY=true npx wrangler deploy --dry-run` | PASSED. 246 asset files, 5817 KiB / gzip 1179 KiB, bindings `DB` and `ASSETS` |
+| Local Workers preview | `yarn preview` and `npx wrangler dev` | PASSED. Ready on port 8787 |
+| Routes | script, `curl` | PASSED. All 58 sitemap URLs 200; `/admin/login`, `/admin/library`, `/library/<slug>`, `/robots.txt`, `/sitemap.xml`, `/logo.png`, `/favicon.png` 200; unknown page and unknown service slug 404; 11 JS/CSS/font files of the home page 200 |
+| API, local D1 only | same script | PASSED. health, list (15 seeded), by slug, tags, 404s, contact lead, gated download, admin login, admin list/leads, create/update/delete, draft hidden from public list |
+| Auth fails closed | same script | PASSED. No key, wrong key, empty key and wrong/empty password all 401 on every admin endpoint and method |
+| Browser | home, library, calculator, contact (mobile width), admin | PASSED with a limit. No console errors, images load, no horizontal overflow at 375 px, `/admin/library` redirects to `/admin/login` when not signed in. Fade-in animations could not be watched because the test browser pane was hidden |
+| Cloudflare's own build and deploy | not run | NOT VERIFIED. Needs a push. The last step there (`yarn exec wrangler deploy`) runs on Linux and could not be run on this PC |
+
+Total for the script: 39 checks, 39 passed. Test rows went into the local D1 copy under
+`.wrangler/` only. Nothing was committed, pushed or deployed, and no production resource was
+touched.
+
+**Canonical URL fix (found during verification, approved, done)**
+
+- Before: `app/layout.js` set `alternates: { canonical: SITE.url }` and every page except blog
+  posts inherited it, so `/about`, `/services` and every service, industry and case-study page
+  told search engines that their canonical address was the home page. This came with the export.
+- Now: `canonical: './'`. Next.js resolves it against `metadataBase` and the current route.
+- Verified on the local Workers preview after a full rebuild: all 58 sitemap URLs serve exactly
+  one canonical tag equal to their own sitemap URL (0 mismatches); the home page is still
+  `https://therapidrevenue.in`; blog posts keep their own value; `/library/<slug>` gets its own;
+  query strings are dropped (`/about?utm_source=x` -> `/about`). The 39-check script was rerun:
+  39 passed.
+- The 404 page now shows `/_not-found` as canonical instead of the home page. It is served with
+  status 404 and `noindex`, so search engines ignore it.
+
+**Found during verification, not changed (your decision)**
+
+- **`og:url`.** The social-sharing URL has the same inheritance problem: every page except blog
+  posts reports the home page as `og:url` (`openGraph.url: SITE.url` in `app/layout.js`). Not
+  changed because only the canonical fix was approved.
+- Items 2 to 7 under "Remaining issues" above are unchanged (`og.png` missing, permissive frame
+  and CORS headers, admin token is the password itself, placeholder seed links).
+- `www.therapidrevenue.in` still has no DNS record.
+
+**Cloudflare dashboard values** (Workers & Pages -> `rapid-revenue` -> Settings -> Build)
+
+| Setting | Value |
+| --- | --- |
+| Build command | `yarn run build` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | `/` |
+| Production branch | whichever is set there now; `main` and `local-repair` are the same commit |
+| Output directory | none (Workers reads `main` and `assets` from `wrangler.jsonc`) |
+| Build variables | none required. Optional `CORS_ORIGINS` (read at build time) |
+| Runtime secret | `ADMIN_PASSWORD` under Settings -> Variables and Secrets |
+| Compatibility | from `wrangler.jsonc`: date `2026-10-01`, flags `nodejs_compat`, `global_fetch_strictly_public` |
 
 ## Git
 
-A local repository was created (none existed). `main` holds the original export (`ddf104c`);
-all work is on branch `local-repair`. Nothing was pushed anywhere.
+Branches `main` and `local-repair` point at the same commit and both are on GitHub
+(`origin`). The changes of 2026-11-15 are in the working tree only: not committed, not pushed.
