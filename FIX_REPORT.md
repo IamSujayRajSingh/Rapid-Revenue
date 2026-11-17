@@ -251,7 +251,46 @@ touched.
 | Runtime secret | `ADMIN_PASSWORD` under Settings -> Variables and Secrets |
 | Compatibility | from `wrangler.jsonc`: date `2026-10-01`, flags `nodejs_compat`, `global_fetch_strictly_public` |
 
+## Push and first Cloudflare builds (2026-11-15)
+
+- Commit `4ebf67b` (the build fix and the canonical fix) was pushed to `main` at 14:36 IST with
+  the owner's approval. `local-repair` was not pushed and is still at `432d1ab`.
+- GitHub shows two Cloudflare "Workers Builds: rapid-revenue" checks, both failed:
+  - on `4ebf67b` (`main`), finished 09:08:36 UTC, build id `d8e4af9e-2d24-45c6-b4d1-8f6b3b78fa96`.
+    **Its log has not been seen. Cause unknown.**
+  - on `432d1ab`, finished 09:16:37 UTC, build id `94892cff-173e-4701-acb7-bf8bcd6ad831`. This is
+    the log the owner supplied. It is the old commit: it runs `next build`, and still shows the
+    `yaml@2.8.3` and Browserslist warnings that `4ebf67b` removed. It fails with the original
+    error, as expected for that commit. It does not test the fix.
+- Reproduction of the fix commit the way Cloudflare builds it, on this PC: fresh clone of
+  `4ebf67b`, clean `yarn --frozen-lockfile`, `yarn run build` with `CI=true`, no terminal attached
+  and no local env files: PASSED (65/65 pages, `.open-next/worker.js` and the compiled config
+  created). So the commit is complete; whatever failed in build `d8e4af9e` is specific to
+  Cloudflare's Linux builder or its settings. This PC has no Linux environment (WSL, Docker) to
+  test further.
+- The live site still serves the previous deployment (old canonical tags).
+
+**Domain problem found while checking the live site (not caused by the push)**
+
+- `therapidrevenue.in` (no www) has no A or AAAA record at its Cloudflare nameservers, so it
+  does not load. It already failed 24 seconds after the push, before any build could have run.
+- `www.therapidrevenue.in` now resolves and returns 200, as does the `workers.dev` address. On
+  2026-11-14 it was the other way round (apex worked, www had no record), so the custom domain
+  was changed in the Cloudflare dashboard since then.
+- Every canonical tag, `robots.txt` and `sitemap.xml` point at the address without www.
+- Owner action: Worker `rapid-revenue` -> Settings -> Domains & Routes -> add
+  `therapidrevenue.in` as a Custom Domain again (keep www as well).
+
 ## Git
 
-Branches `main` and `local-repair` point at the same commit and both are on GitHub
-(`origin`). The changes of 2026-11-15 are in the working tree only: not committed, not pushed.
+`main` is at `4ebf67b` locally and on GitHub. `local-repair` is at `432d1ab` locally and on
+GitHub. GitHub's default branch is `main` (changed by the owner on 2026-11-17; checked with
+`git ls-remote --symref origin HEAD`, local `origin/HEAD` refreshed with `git remote set-head origin -a`).
+The Cloudflare production branch is also `main` (owner's dashboard screenshot, 2026-11-17), build
+command `yarn run build`, deploy command `npx wrangler deploy`, root `/`, builds enabled. So every
+push to `main` starts a production build. The latest build still shows as failed.
+On 2026-11-17 the owner pasted a build log again (09:14–09:16 UTC on 2026-11-15). It is the
+`432d1ab` log once more: it runs `$ next build` (432d1ab's script; `main` runs
+`opennextjs-cloudflare build`) and ends with "Could not find compiled Open Next config". So no build
+of `main` has been seen to fail with a known cause. Next step: start a fresh build of `main`
+(Retry build on the `main` deployment, or a new push) and read that log if it fails.
