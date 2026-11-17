@@ -39,7 +39,9 @@ export const metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
   },
-  alternates: { canonical: SITE.url },
+  // './' is resolved against metadataBase + the current route, so every page gets its own
+  // canonical URL (a fixed SITE.url here made every page point at the home page).
+  alternates: { canonical: './' },
   category: 'business',
   applicationName: SITE.name,
   referrer: 'origin-when-cross-origin',
