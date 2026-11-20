@@ -38,3 +38,6 @@ next-env.d.ts
 .dev.vars.*
 
 !.dev.vars.example
+
+# Private portfolio references and evidence (never serve or commit)
+/reference-private/

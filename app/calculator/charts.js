@@ -11,17 +11,17 @@ const fmtINR = (n) => {
   return `₹${Math.round(n).toLocaleString('en-IN')}`
 }
 
-const TOOLTIP = { background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: 12, fontSize: 12 }
-const COLORS = ['#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#60a5fa', '#f87171']
+const TOOLTIP = { background: 'rgb(var(--card))', color: 'rgb(var(--text))', border: '1px solid rgb(var(--border))', borderRadius: 12, fontSize: 12 }
+const COLORS = ['rgb(var(--primary))', 'rgb(var(--text))', 'rgb(var(--highlight))', 'rgb(var(--muted))', 'rgb(var(--primary-hover))', 'rgb(var(--bg-secondary))']
 
 export function BreakdownChart({ data }) {
   return (
     <div className="h-72">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-          <XAxis dataKey="name" tick={{ fill: '#666', fontSize: 11 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: '#666', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={fmtINR} width={70} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--border))" />
+          <XAxis dataKey="name" tick={{ fill: 'rgb(var(--muted))', fontSize: 11 }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fill: 'rgb(var(--muted))', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={fmtINR} width={70} />
           <Tooltip contentStyle={TOOLTIP} formatter={(v) => fmtINR(v)} />
           <Bar dataKey="value" radius={[8, 8, 0, 0]}>{data.map((e, i) => <Cell key={i} fill={e.fill} />)}</Bar>
         </BarChart>
@@ -51,16 +51,16 @@ export function ProjectionChart({ data }) {
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <defs>
-            <linearGradient id="cur" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#a78bfa" stopOpacity={0.4} /><stop offset="100%" stopColor="#a78bfa" stopOpacity={0} /></linearGradient>
-            <linearGradient id="opt" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#34d399" stopOpacity={0.5} /><stop offset="100%" stopColor="#34d399" stopOpacity={0} /></linearGradient>
+            <linearGradient id="cur" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="rgb(var(--primary))" stopOpacity={0.4} /><stop offset="100%" stopColor="rgb(var(--primary))" stopOpacity={0} /></linearGradient>
+            <linearGradient id="opt" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#047857" stopOpacity={0.5} /><stop offset="100%" stopColor="#047857" stopOpacity={0} /></linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-          <XAxis dataKey="m" tick={{ fill: '#666', fontSize: 11 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: '#666', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={fmtINR} width={70} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--border))" />
+          <XAxis dataKey="m" tick={{ fill: 'rgb(var(--muted))', fontSize: 11 }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fill: 'rgb(var(--muted))', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={fmtINR} width={70} />
           <Tooltip contentStyle={TOOLTIP} formatter={(v) => fmtINR(v)} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
-          <Area type="monotone" dataKey="current" name="Current path" stroke="#a78bfa" fill="url(#cur)" strokeWidth={2} />
-          <Area type="monotone" dataKey="optimized" name="Engineered path" stroke="#34d399" fill="url(#opt)" strokeWidth={2} />
+          <Area type="monotone" dataKey="current" name="Current path" stroke="rgb(var(--primary))" fill="url(#cur)" strokeWidth={2} />
+          <Area type="monotone" dataKey="optimized" name="Engineered path" stroke="#047857" fill="url(#opt)" strokeWidth={2} />
         </AreaChart>
       </ResponsiveContainer>
     </div>
@@ -72,13 +72,13 @@ export function CompareChart({ data }) {
     <div className="h-64">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-          <XAxis dataKey="name" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: '#666', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={fmtINR} width={70} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--border))" />
+          <XAxis dataKey="name" tick={{ fill: 'rgb(var(--muted))', fontSize: 12 }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fill: 'rgb(var(--muted))', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={fmtINR} width={70} />
           <Tooltip contentStyle={TOOLTIP} formatter={(v) => fmtINR(v)} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
-          <Bar dataKey="current" name="Current" fill="#a78bfa" radius={[8, 8, 0, 0]} />
-          <Bar dataKey="optimized" name="Engineered" fill="#34d399" radius={[8, 8, 0, 0]} />
+          <Bar dataKey="current" name="Current" fill="rgb(var(--primary))" radius={[8, 8, 0, 0]} />
+          <Bar dataKey="optimized" name="Engineered" fill="#047857" radius={[8, 8, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
