@@ -14,9 +14,9 @@ const BELIEFS = [
 
 export default function PhilosophyPage() {
   return (
-    <main className="bg-black text-white min-h-screen">
+    <main className="bg-background text-heading min-h-screen">
       <PageHero eyebrow="Our Philosophy" title={<>Revenue can lie.<br /><span className="italic font-light">Profit tells the truth.</span></>} subtitle="The six core beliefs that shape every engagement, every framework and every recommendation we make." breadcrumbs={[{label:'Philosophy'}]} />
-      <section className="py-20 px-6"><div className="max-w-4xl mx-auto space-y-4">{BELIEFS.map((b,i)=>(<div key={i} className="rounded-2xl border border-white/[0.06] bg-[#0a0a0a] p-8"><div className="text-[11px] tracking-[0.25em] uppercase text-neutral-500">Belief 0{i+1}</div><h3 className="mt-3 text-2xl md:text-3xl font-semibold tracking-tight text-gradient">{b.t}</h3><p className="mt-3 text-[16px] text-neutral-400 leading-relaxed">{b.d}</p></div>))}</div></section>
+      <section className="py-20 px-6"><div className="max-w-4xl mx-auto space-y-4">{BELIEFS.map((b,i)=>(<div key={i} className="rounded-2xl border border-border bg-card p-8"><div className="text-[11px] tracking-[0.25em] uppercase text-body">Belief 0{i+1}</div><h3 className="mt-3 text-2xl md:text-3xl font-semibold tracking-tight text-gradient">{b.t}</h3><p className="mt-3 text-[16px] text-body leading-relaxed">{b.d}</p></div>))}</div></section>
       <CTASection />
     </main>
   )

@@ -13,11 +13,11 @@ import PageHero from '@/components/site/page-hero'
 import CTASection from '@/components/site/cta-section'
 import { SITE } from '@/lib/site-config'
 
-const ChartLoading = () => <div className="h-56 rounded-xl border border-white/[0.06] bg-[#0a0a0a]/40 animate-pulse" />
-const BreakdownChart = dynamic(() => import('./charts').then(m => m.BreakdownChart), { ssr: false, loading: () => <div className="h-72 rounded-xl border border-white/[0.06] bg-[#0a0a0a]/40 animate-pulse" /> })
+const ChartLoading = () => <div className="h-56 rounded-xl border border-border bg-card/40 animate-pulse" />
+const BreakdownChart = dynamic(() => import('./charts').then(m => m.BreakdownChart), { ssr: false, loading: () => <div className="h-72 rounded-xl border border-border bg-card/40 animate-pulse" /> })
 const LeaksChart = dynamic(() => import('./charts').then(m => m.LeaksChart), { ssr: false, loading: ChartLoading })
 const ProjectionChart = dynamic(() => import('./charts').then(m => m.ProjectionChart), { ssr: false, loading: ChartLoading })
-const CompareChart = dynamic(() => import('./charts').then(m => m.CompareChart), { ssr: false, loading: () => <div className="h-64 rounded-xl border border-white/[0.06] bg-[#0a0a0a]/40 animate-pulse" /> })
+const CompareChart = dynamic(() => import('./charts').then(m => m.CompareChart), { ssr: false, loading: () => <div className="h-64 rounded-xl border border-border bg-card/40 animate-pulse" /> })
 
 /* ---------- Utilities ---------- */
 const fmtINR = (n) => {
@@ -112,11 +112,11 @@ function Field({ label, hint, unit, value, onChange, min = 0, max, step = 1, cur
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <label className="text-[12px] text-neutral-400">{label}</label>
-        {hint && <span className="text-[10px] text-neutral-600">{hint}</span>}
+        <label className="text-[12px] text-body">{label}</label>
+        {hint && <span className="text-[10px] text-body">{hint}</span>}
       </div>
       <div className="relative">
-        {currency && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 text-[13px]">₹</span>}
+        {currency && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-body text-[13px]">₹</span>}
         <input
           type="number"
           value={value}
@@ -124,9 +124,9 @@ function Field({ label, hint, unit, value, onChange, min = 0, max, step = 1, cur
           min={min}
           max={max}
           step={step}
-          className={`w-full rounded-lg bg-black/40 border border-white/[0.08] ${currency ? 'pl-7' : 'pl-3'} pr-10 py-2.5 text-[14px] text-white focus:outline-none focus:border-white/30 transition`}
+          className={`w-full rounded-lg bg-background border border-border ${currency ? 'pl-7' : 'pl-3'} pr-10 py-2.5 text-[14px] text-heading focus:outline-none focus:border-primary transition`}
         />
-        {unit && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 text-[12px]">{unit}</span>}
+        {unit && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-body text-[12px]">{unit}</span>}
       </div>
     </div>
   )
@@ -134,30 +134,30 @@ function Field({ label, hint, unit, value, onChange, min = 0, max, step = 1, cur
 
 function StatCard({ icon: Icon, label, value, sub, tone = 'default', big = false }) {
   const tones = {
-    default: 'from-white/[0.03]',
+    default: 'from-card',
     positive: 'from-emerald-500/15',
     negative: 'from-red-500/15',
     warning: 'from-amber-500/15',
-    accent: 'from-violet-500/15',
+    accent: 'from-highlight/15',
   }
   return (
-    <div className={`relative rounded-2xl border border-white/[0.06] bg-gradient-to-br ${tones[tone]} to-transparent overflow-hidden`}>
-      <div className="absolute inset-0 bg-[#0a0a0a]/60" />
+    <div className={`relative rounded-2xl border border-border bg-gradient-to-br ${tones[tone]} to-transparent overflow-hidden`}>
+      <div className="absolute inset-0 bg-card/60" />
       <div className="relative p-5">
         <div className="flex items-center justify-between">
           <div className="h-8 w-8 rounded-lg glass flex items-center justify-center">
             <Icon className="h-4 w-4" strokeWidth={1.5} />
           </div>
         </div>
-        <div className="mt-4 text-[10px] tracking-[0.18em] uppercase text-neutral-500">{label}</div>
+        <div className="mt-4 text-[10px] tracking-[0.18em] uppercase text-body">{label}</div>
         <div className={`mt-1 font-semibold tracking-tight text-gradient ${big ? 'text-4xl md:text-5xl' : 'text-2xl md:text-3xl'}`}>{value}</div>
-        {sub && <div className="mt-1 text-[11px] text-neutral-500">{sub}</div>}
+        {sub && <div className="mt-1 text-[11px] text-body">{sub}</div>}
       </div>
     </div>
   )
 }
 
-const COLORS = ['#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#60a5fa', '#f87171']
+const COLORS = ['rgb(var(--primary))', 'rgb(var(--text))', 'rgb(var(--highlight))', 'rgb(var(--muted))', 'rgb(var(--primary-hover))', 'rgb(var(--bg-secondary))']
 
 export default function CalculatorPage() {
   const [inputs, setInputs] = useState(DEFAULTS)
@@ -168,12 +168,12 @@ export default function CalculatorPage() {
 
   // Chart data
   const breakdown = [
-    { name: 'Realized Rev', value: m.realizedRevenue, fill: '#ffffff' },
-    { name: 'COGS', value: -m.cogs, fill: '#f87171' },
-    { name: 'Shipping', value: -m.shippingTotal, fill: '#fbbf24' },
-    { name: 'Payment Fees', value: -m.paymentFees, fill: '#f472b6' },
-    { name: 'Ad Spend', value: -inputs.adSpend, fill: '#a78bfa' },
-    { name: 'Net Profit', value: m.netProfit, fill: m.netProfit >= 0 ? '#34d399' : '#f87171' },
+    { name: 'Realized Rev', value: m.realizedRevenue, fill: 'rgb(var(--primary))' },
+    { name: 'COGS', value: -m.cogs, fill: '#b91c1c' },
+    { name: 'Shipping', value: -m.shippingTotal, fill: 'rgb(var(--highlight))' },
+    { name: 'Payment Fees', value: -m.paymentFees, fill: 'rgb(var(--muted))' },
+    { name: 'Ad Spend', value: -inputs.adSpend, fill: 'rgb(var(--primary))' },
+    { name: 'Net Profit', value: m.netProfit, fill: m.netProfit >= 0 ? '#047857' : '#b91c1c' },
   ]
 
   const leaks = [
@@ -203,17 +203,17 @@ export default function CalculatorPage() {
     const now = new Date().toLocaleString('en-IN')
     const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapid Revenue Profit Report</title>
     <style>
-      body{font-family:Inter,system-ui,sans-serif;background:#000;color:#fff;padding:40px;max-width:900px;margin:auto}
-      h1{font-size:32px;margin:0 0 4px;background:linear-gradient(180deg,#fff,#a3a3a3);-webkit-background-clip:text;color:transparent}
-      h2{font-size:18px;color:#fff;margin-top:32px;border-bottom:1px solid #222;padding-bottom:8px}
+      body{font-family:Inter,system-ui,sans-serif;background:#F5F7FA;color:#526078;padding:40px;max-width:900px;margin:auto}
+      h1{font-size:32px;margin:0 0 4px;background:linear-gradient(180deg,#101A32,#101A32);-webkit-background-clip:text;color:transparent}
+      h2{font-size:18px;color:#101A32;margin-top:32px;border-bottom:1px solid #DDE5EF;padding-bottom:8px}
       table{width:100%;border-collapse:collapse;margin-top:12px}
-      td,th{padding:8px 12px;text-align:left;border-bottom:1px solid #1a1a1a;font-size:14px}
-      th{color:#888;font-weight:500;text-transform:uppercase;font-size:11px;letter-spacing:.15em}
+      td,th{padding:8px 12px;text-align:left;border-bottom:1px solid #DDE5EF;font-size:14px}
+      th{color:#526078;font-weight:500;text-transform:uppercase;font-size:11px;letter-spacing:.15em}
       .big{font-size:44px;font-weight:600}.mono{font-family:ui-monospace,monospace}
       .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
-      .card{border:1px solid #1a1a1a;border-radius:12px;padding:16px;background:#0a0a0a}
-      .pos{color:#34d399}.neg{color:#f87171}.muted{color:#888;font-size:12px}
-      .brand{color:#888;font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px}
+      .card{border:1px solid #DDE5EF;border-radius:12px;padding:16px;background:#FFFFFF}
+      .pos{color:#047857}.neg{color:#b91c1c}.muted{color:#526078;font-size:12px}
+      .brand{color:#526078;font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px}
     </style></head><body>
     <div class="brand">Rapid Revenue · Profit Engineering™ Report</div>
     <h1>Your Profit Diagnostic</h1>
@@ -281,7 +281,7 @@ export default function CalculatorPage() {
   }
 
   return (
-    <main className="bg-black text-white min-h-screen">
+    <main className="bg-background text-heading min-h-screen">
       <PageHero
         eyebrow="Profit Engineering™ Diagnostic"
         title={<>Ecommerce<br /><span className="italic font-light">Profit Calculator.</span></>}
@@ -293,8 +293,8 @@ export default function CalculatorPage() {
         <div className="max-w-7xl mx-auto grid lg:grid-cols-[380px_1fr] gap-6">
 
           {/* ---------- INPUTS ---------- */}
-          <aside className="lg:sticky lg:top-24 h-fit rounded-3xl border border-white/[0.06] bg-[#0a0a0a] p-5 md:p-6">
-            <div className="text-[11px] tracking-[0.2em] uppercase text-neutral-500 mb-4">Your business inputs</div>
+          <aside className="lg:sticky lg:top-24 h-fit rounded-3xl border border-border bg-card p-5 md:p-6">
+            <div className="text-[11px] tracking-[0.2em] uppercase text-body mb-4">Your business inputs</div>
             <div className="space-y-4">
               <Field label="Monthly Revenue" hint="gross before returns" currency value={inputs.revenue} onChange={set('revenue')} step={10000} />
               <Field label="Monthly Ad Spend" currency value={inputs.adSpend} onChange={set('adSpend')} step={10000} />
@@ -315,12 +315,12 @@ export default function CalculatorPage() {
                 <Field label="RTO %" unit="%" value={inputs.rto} onChange={set('rto')} step={1} max={80} />
               </div>
 
-              <div className="pt-3 mt-4 border-t border-white/5 flex items-center justify-between text-[12px] text-neutral-500">
+              <div className="pt-3 mt-4 border-t border-border flex items-center justify-between text-[12px] text-body">
                 <span>Blended MER (calculated)</span>
-                <span className="text-white font-semibold">{m.merCalc.toFixed(2)}x</span>
+                <span className="text-heading font-semibold">{m.merCalc.toFixed(2)}x</span>
               </div>
 
-              <button onClick={() => setInputs(DEFAULTS)} className="w-full mt-3 rounded-lg glass py-2 text-[12px] text-neutral-300 hover:bg-white/5">
+              <button onClick={() => setInputs(DEFAULTS)} className="w-full mt-3 rounded-lg glass py-2 text-[12px] text-body hover:bg-secondary">
                 Reset to example
               </button>
             </div>
@@ -339,16 +339,16 @@ export default function CalculatorPage() {
 
             {/* Health score + secondary metrics */}
             <div className="grid md:grid-cols-3 gap-3">
-              <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} className="relative rounded-2xl border border-white/[0.06] bg-gradient-to-br from-violet-500/15 to-transparent overflow-hidden md:col-span-1">
-                <div className="absolute inset-0 bg-[#0a0a0a]/60" />
+              <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} className="relative rounded-2xl border border-border bg-gradient-to-br from-highlight/15 to-transparent overflow-hidden md:col-span-1">
+                <div className="absolute inset-0 bg-card/60" />
                 <div className="relative p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div className="h-8 w-8 rounded-lg glass flex items-center justify-center"><Activity className="h-4 w-4" /></div>
-                    <span className="text-[10px] tracking-[0.18em] uppercase text-neutral-500">Health Score</span>
+                    <span className="text-[10px] tracking-[0.18em] uppercase text-body">Health Score</span>
                   </div>
                   <div className="relative w-32 h-32 mx-auto">
                     <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                      <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
+                      <circle cx="50" cy="50" r="42" fill="none" stroke="rgb(var(--border))" strokeWidth="8" />
                       <motion.circle
                         cx="50" cy="50" r="42" fill="none"
                         stroke="url(#healthGrad)" strokeWidth="8" strokeLinecap="round"
@@ -359,17 +359,17 @@ export default function CalculatorPage() {
                       />
                       <defs>
                         <linearGradient id="healthGrad" x1="0" x2="1">
-                          <stop offset="0%" stopColor="#a78bfa" />
-                          <stop offset="100%" stopColor="#34d399" />
+                          <stop offset="0%" stopColor="rgb(var(--primary))" />
+                          <stop offset="100%" stopColor="#047857" />
                         </linearGradient>
                       </defs>
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <div className="text-4xl font-semibold">{m.healthScore}</div>
-                      <div className="text-[10px] text-neutral-500">/ 100</div>
+                      <div className="text-[10px] text-body">/ 100</div>
                     </div>
                   </div>
-                  <div className="mt-3 text-center text-[12px] text-neutral-400">
+                  <div className="mt-3 text-center text-[12px] text-body">
                     {m.healthScore >= 75 ? 'Ready to scale' : m.healthScore >= 50 ? 'Engineerable' : 'Fix before scaling'}
                   </div>
                 </div>
@@ -384,10 +384,10 @@ export default function CalculatorPage() {
             </div>
 
             {/* P&L Waterfall */}
-            <div className="rounded-3xl border border-white/[0.06] bg-[#0a0a0a] p-5 md:p-6">
+            <div className="rounded-3xl border border-border bg-card p-5 md:p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <div className="text-[11px] tracking-[0.2em] uppercase text-neutral-500">Monthly P&L Breakdown</div>
+                  <div className="text-[11px] tracking-[0.2em] uppercase text-body">Monthly P&L Breakdown</div>
                   <h3 className="mt-1 text-xl font-semibold">Where every rupee goes</h3>
                 </div>
               </div>
@@ -398,26 +398,26 @@ export default function CalculatorPage() {
 
             {/* Leaks + Projection */}
             <div className="grid md:grid-cols-2 gap-3">
-              <div className="rounded-3xl border border-white/[0.06] bg-[#0a0a0a] p-5 md:p-6">
-                <div className="text-[11px] tracking-[0.2em] uppercase text-neutral-500">Revenue Leaks</div>
+              <div className="rounded-3xl border border-border bg-card p-5 md:p-6">
+                <div className="text-[11px] tracking-[0.2em] uppercase text-body">Revenue Leaks</div>
                 <h3 className="mt-1 text-xl font-semibold">What you're losing</h3>
                 <div className="mt-3">
                   {leaks.length ? <LeaksChart data={leaks} /> : (
-                    <div className="h-56 flex items-center justify-center text-[13px] text-emerald-400">No leaks detected — solid metrics.</div>
+                    <div className="h-56 flex items-center justify-center text-[13px] text-emerald-700">No leaks detected — solid metrics.</div>
                   )}
                 </div>
                 <ul className="mt-3 space-y-1.5">
                   {leaks.map((l, i) => (
                     <li key={i} className="flex items-center justify-between text-[12px]">
-                      <span className="flex items-center gap-2 text-neutral-400"><span className="h-2 w-2 rounded-full" style={{background: COLORS[i % COLORS.length]}} />{l.name}</span>
-                      <span className="text-white font-mono">{fmtINR(l.value)}</span>
+                      <span className="flex items-center gap-2 text-body"><span className="h-2 w-2 rounded-full" style={{background: COLORS[i % COLORS.length]}} />{l.name}</span>
+                      <span className="text-heading font-mono">{fmtINR(l.value)}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="rounded-3xl border border-white/[0.06] bg-[#0a0a0a] p-5 md:p-6">
-                <div className="text-[11px] tracking-[0.2em] uppercase text-neutral-500">12-Month Projection</div>
+              <div className="rounded-3xl border border-border bg-card p-5 md:p-6">
+                <div className="text-[11px] tracking-[0.2em] uppercase text-body">12-Month Projection</div>
                 <h3 className="mt-1 text-xl font-semibold">Current path vs engineered path</h3>
                 <div className="mt-3">
                   <ProjectionChart data={projection} />
@@ -426,10 +426,10 @@ export default function CalculatorPage() {
             </div>
 
             {/* Current vs Optimized */}
-            <div className="rounded-3xl border border-white/[0.06] bg-[#0a0a0a] p-5 md:p-6">
+            <div className="rounded-3xl border border-border bg-card p-5 md:p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <div className="text-[11px] tracking-[0.2em] uppercase text-neutral-500">Before vs After Profit Engineering™</div>
+                  <div className="text-[11px] tracking-[0.2em] uppercase text-body">Before vs After Profit Engineering™</div>
                   <h3 className="mt-1 text-xl font-semibold">What your business could look like</h3>
                 </div>
               </div>
@@ -437,46 +437,46 @@ export default function CalculatorPage() {
                 <CompareChart data={compare} />
               </div>
               <div className="mt-4 grid grid-cols-3 gap-3 text-[12px]">
-                <div className="rounded-xl border border-white/[0.06] p-3">
-                  <div className="text-neutral-500">Target RTO</div>
-                  <div className="text-white font-semibold mt-1">{m.optRto}%</div>
+                <div className="rounded-xl border border-border p-3">
+                  <div className="text-body">Target RTO</div>
+                  <div className="text-heading font-semibold mt-1">{m.optRto}%</div>
                 </div>
-                <div className="rounded-xl border border-white/[0.06] p-3">
-                  <div className="text-neutral-500">Target CVR</div>
-                  <div className="text-white font-semibold mt-1">{m.optCvr.toFixed(1)}%</div>
+                <div className="rounded-xl border border-border p-3">
+                  <div className="text-body">Target CVR</div>
+                  <div className="text-heading font-semibold mt-1">{m.optCvr.toFixed(1)}%</div>
                 </div>
-                <div className="rounded-xl border border-white/[0.06] p-3">
-                  <div className="text-neutral-500">Target Repeat</div>
-                  <div className="text-white font-semibold mt-1">{m.optRepeat}%</div>
+                <div className="rounded-xl border border-border p-3">
+                  <div className="text-body">Target Repeat</div>
+                  <div className="text-heading font-semibold mt-1">{m.optRepeat}%</div>
                 </div>
               </div>
             </div>
 
             {/* Download + CTA */}
             <div className="grid md:grid-cols-2 gap-3">
-              <button onClick={downloadReport} className="group flex items-center justify-between rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/5 to-transparent p-5 hover:border-white/20 transition text-left">
+              <button onClick={downloadReport} className="group flex items-center justify-between rounded-2xl border border-border bg-gradient-to-br from-card to-transparent p-5 hover:border-primary/40 transition text-left">
                 <div>
-                  <div className="text-[11px] tracking-[0.2em] uppercase text-neutral-500">Report</div>
+                  <div className="text-[11px] tracking-[0.2em] uppercase text-body">Report</div>
                   <div className="mt-1 text-lg font-semibold">Download full report</div>
-                  <div className="text-[12px] text-neutral-500 mt-1">Complete diagnostic · shareable HTML</div>
+                  <div className="text-[12px] text-body mt-1">Complete diagnostic · shareable HTML</div>
                 </div>
-                <div className="h-11 w-11 rounded-full glass flex items-center justify-center group-hover:bg-white/10 transition">
+                <div className="h-11 w-11 rounded-full glass flex items-center justify-center group-hover:bg-secondary transition">
                   <Download className="h-5 w-5" />
                 </div>
               </button>
-              <a href={SITE.calendly} target="_blank" rel="noopener" className="group flex items-center justify-between rounded-2xl bg-white text-black p-5 hover:bg-neutral-200 transition">
+              <a href={SITE.calendly} target="_blank" rel="noopener" className="group flex items-center justify-between rounded-2xl bg-primary text-primary-foreground p-5 hover:bg-primary-hover transition">
                 <div>
-                  <div className="text-[11px] tracking-[0.2em] uppercase text-neutral-500">Next Step</div>
+                  <div className="text-[11px] tracking-[0.2em] uppercase text-primary-foreground">Next Step</div>
                   <div className="mt-1 text-lg font-semibold">Book a strategy call</div>
-                  <div className="text-[12px] text-neutral-600 mt-1">30-min diagnostic with our team</div>
+                  <div className="text-[12px] text-primary-foreground mt-1">30-min diagnostic with our team</div>
                 </div>
-                <div className="h-11 w-11 rounded-full bg-black text-white flex items-center justify-center group-hover:scale-105 transition">
+                <div className="h-11 w-11 rounded-full bg-background text-heading flex items-center justify-center group-hover:scale-105 transition">
                   <ArrowRight className="h-5 w-5" />
                 </div>
               </a>
             </div>
 
-            <p className="text-[11px] text-neutral-600 text-center pt-4">
+            <p className="text-[11px] text-body text-center pt-4">
               This is a directional model. Payment fees assumed at 2%. RTO cost includes reverse logistics + unrecovered COGS. For a full Profit Engineering™ audit tailored to your P&L, book a strategy call.
             </p>
           </div>

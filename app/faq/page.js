@@ -17,7 +17,7 @@ const FAQS = [
 
 export default function FAQPage() {
   return (
-    <main className="bg-black text-white min-h-screen">
+    <main className="bg-background text-heading min-h-screen">
       <PageHero eyebrow="FAQs" title="Frequently asked questions" subtitle="Everything you need to know about Rapid Revenue, our framework and how we engage." breadcrumbs={[{label:'FAQs'}]} />
       <FAQ items={FAQS} />
       <CTASection />

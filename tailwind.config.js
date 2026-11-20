@@ -18,38 +18,42 @@ module.exports = {
       },
       extend: {
         colors: {
-          border: 'hsl(var(--border))',
-          input: 'hsl(var(--input))',
-          ring: 'hsl(var(--ring))',
-          background: 'hsl(var(--background))',
-          foreground: 'hsl(var(--foreground))',
+          border: 'rgb(var(--border) / <alpha-value>)',
+          input: 'rgb(var(--border) / <alpha-value>)',
+          ring: 'rgb(var(--primary) / <alpha-value>)',
+          background: 'rgb(var(--bg) / <alpha-value>)',
+          foreground: 'rgb(var(--text) / <alpha-value>)',
+          heading: 'rgb(var(--text) / <alpha-value>)',
+          body: 'rgb(var(--muted) / <alpha-value>)',
+          highlight: 'rgb(var(--highlight) / <alpha-value>)',
           primary: {
-            DEFAULT: 'hsl(var(--primary))',
-            foreground: 'hsl(var(--primary-foreground))'
+            DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
+            foreground: 'rgb(var(--card) / <alpha-value>)',
+            hover: 'rgb(var(--primary-hover) / <alpha-value>)'
           },
           secondary: {
-            DEFAULT: 'hsl(var(--secondary))',
-            foreground: 'hsl(var(--secondary-foreground))'
+            DEFAULT: 'rgb(var(--bg-secondary) / <alpha-value>)',
+            foreground: 'rgb(var(--text) / <alpha-value>)'
           },
           destructive: {
             DEFAULT: 'hsl(var(--destructive))',
             foreground: 'hsl(var(--destructive-foreground))'
           },
           muted: {
-            DEFAULT: 'hsl(var(--muted))',
-            foreground: 'hsl(var(--muted-foreground))'
+            DEFAULT: 'rgb(var(--bg-secondary) / <alpha-value>)',
+            foreground: 'rgb(var(--muted) / <alpha-value>)'
           },
           accent: {
-            DEFAULT: 'hsl(var(--accent))',
-            foreground: 'hsl(var(--accent-foreground))'
+            DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
+            foreground: 'rgb(var(--card) / <alpha-value>)'
           },
           popover: {
-            DEFAULT: 'hsl(var(--popover))',
-            foreground: 'hsl(var(--popover-foreground))'
+            DEFAULT: 'rgb(var(--card) / <alpha-value>)',
+            foreground: 'rgb(var(--text) / <alpha-value>)'
           },
           card: {
-            DEFAULT: 'hsl(var(--card))',
-            foreground: 'hsl(var(--card-foreground))'
+            DEFAULT: 'rgb(var(--card) / <alpha-value>)',
+            foreground: 'rgb(var(--text) / <alpha-value>)'
           },
           chart: {
             '1': 'hsl(var(--chart-1))',

@@ -38,7 +38,7 @@ export default function Nav() {
                      onMouseEnter={() => item.children && setActiveDropdown(item.label)}
                      onMouseLeave={() => setActiveDropdown(null)}>
                   <Link href={item.href}
-                        className="px-3 py-1.5 text-[13px] text-neutral-400 hover:text-white transition-colors inline-flex items-center gap-1">
+                        className="px-3 py-1.5 text-[13px] text-body hover:text-primary transition-colors inline-flex items-center gap-1">
                     {item.label}
                     {item.children && <ChevronDown className="h-3 w-3 opacity-50" />}
                   </Link>
@@ -53,7 +53,7 @@ export default function Nav() {
                       >
                         {item.children.map(c => (
                           <Link key={c.href} href={c.href}
-                                className="block px-3 py-2 rounded-lg text-[13px] text-neutral-300 hover:text-white hover:bg-white/5 transition">
+                                className="block px-3 py-2 rounded-lg text-[13px] text-body hover:text-primary hover:bg-secondary transition">
                             {c.label}
                           </Link>
                         ))}
@@ -66,7 +66,7 @@ export default function Nav() {
 
             <div className="flex items-center gap-2">
               <a href={SITE.calendly} target="_blank" rel="noopener"
-                 className="hidden sm:inline-flex group items-center gap-1.5 rounded-full bg-white text-black px-4 py-2 text-[13px] font-medium hover:bg-neutral-200 transition-all">
+                 className="hidden sm:inline-flex group items-center gap-1.5 rounded-full bg-primary text-primary-foreground px-4 py-2 text-[13px] font-medium hover:bg-primary-hover transition-all">
                 Book Strategy Call
                 <ArrowUpRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </a>
@@ -84,27 +84,27 @@ export default function Nav() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl pt-24 pb-8 px-6 overflow-y-auto lg:hidden"
+            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl pt-24 pb-8 px-6 overflow-y-auto lg:hidden"
           >
             <nav className="space-y-1">
               {NAV.map(item => (
-                <div key={item.href} className="border-b border-white/5 py-2">
+                <div key={item.href} className="border-b border-border py-2">
                   <Link href={item.href} onClick={() => setOpen(false)}
-                        className="block py-2 text-lg font-medium text-white">
+                        className="block py-2 text-lg font-medium text-heading">
                     {item.label}
                   </Link>
                   {item.children && (
                     <div className="pl-3 space-y-1 pb-2">
                       {item.children.map(c => (
                         <Link key={c.href} href={c.href} onClick={() => setOpen(false)}
-                              className="block py-1.5 text-[14px] text-neutral-400">{c.label}</Link>
+                              className="block py-1.5 text-[14px] text-body">{c.label}</Link>
                       ))}
                     </div>
                   )}
                 </div>
               ))}
               <a href={SITE.calendly} target="_blank" rel="noopener"
-                 className="mt-6 flex items-center justify-center gap-2 rounded-full bg-white text-black px-6 py-3.5 font-medium">
+                 className="mt-6 flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3.5 font-medium">
                 Book Strategy Call <ArrowUpRight className="h-4 w-4" />
               </a>
             </nav>
